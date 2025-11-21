@@ -26,13 +26,14 @@ def dl_(url, output_path="downloads/"):
         'ffmpeg_location': ffmpath,
 
         'embedthumbnail': True,
-
-        'postprocessors': [{
-            'key': 'FFmpegExtractAudio',
-            'preferredcodec': 'mp3',
-            'preferredquality': '192',
-        }],
     }
+
+    # 'postprocessors': [{
+    #     'key': 'FFmpegExtractAudio',
+    #     'preferredcodec': 'mp3',
+    #     'preferredquality': '192',
+    # }],
+
 
     try:
         with yt_dlp.YoutubeDL(opts) as ydl:
