@@ -1,4 +1,4 @@
 .venv/
-downloads/
+tmp/
 .idea
 .env

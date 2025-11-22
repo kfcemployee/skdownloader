@@ -1,22 +1,18 @@
 import yt_dlp
 import os
 import argparse
-import logging
 
-logging.basicConfig(
-    format="%(level)s - %(message)s"
-)
+def dl_(url, output_path="downloads/", is_pl=None, ffmpeg_path=None):
+    if not output_path:
+        output_path = "downloads/"
 
-lg = logging.getLogger(__name__)
-
-def dl_(url, output_path="downloads/"):
-    if not os.path.exists(output_path):
+    if not output_path or not os.path.exists(output_path):
         os.mkdir(output_path)
 
-    if "/sets/" in url:
+    if ("/sets/" in url) or is_pl:
         output_path += "playlists/"
 
-    ffmpath = r"utils/ffmpeg.exe"
+    ffmpath = r"ffmpeg.exe" if not ffmpeg_path else ffmpeg_path
     output_path += "%(uploader)s - %(title)s.%(ext)s"
 
     opts = {
@@ -24,25 +20,30 @@ def dl_(url, output_path="downloads/"):
         'format': 'bestaudio/best',
         'outtmpl': output_path,
         'ffmpeg_location': ffmpath,
-
         'embedthumbnail': True,
+        'postprocessors': [{
+            'key': 'FFmpegExtractAudio',
+            'preferredcodec': 'mp3',
+            'preferredquality': '192',
+        }],
     }
-
-    # 'postprocessors': [{
-    #     'key': 'FFmpegExtractAudio',
-    #     'preferredcodec': 'mp3',
-    #     'preferredquality': '192',
-    # }],
-
-
     try:
         with yt_dlp.YoutubeDL(opts) as ydl:
             ydl.download([url])
-
     except yt_dlp.DownloadError:
-        lg.error("Download_error")
+        opts.pop("postprocessors")
+
+        try:
+            print("error with ffmpeg: trying to download without ffmpeg...")
+            with yt_dlp.YoutubeDL(opts) as ydl:
+                ydl.download([url])
+        except yt_dlp.DownloadError:
+            print("download error")
+
     except Exception as ex:
-        lg.error(f"error: {ex}")
+        print(f"error: {ex}")
+
+    print("downloaded successfully")
 
 def main():
     pr = argparse.ArgumentParser()
@@ -55,18 +56,25 @@ def main():
         "-o", "--out_path",
         default=None
     )
+    pr.add_argument(
+        "-pl", "--playlist",
+        default=None
+    )
+    pr.add_argument(
+        "-ff", "--ffmpeg_path",
+        default=None
+    )
 
     args = pr.parse_args()
     try:
         if not args.url:
             dl_(input())
             return
-
-        if args.out_path:
-            dl_(args.url, args.out_path)
-            return
-        dl_(args.url)
+        dl_(args.url,
+            args.out_path,
+            args.playlist,
+            args.ffmpeg_path)
     except Exception as e:
-        lg.error(e)
+        print(e)
 
 main()
