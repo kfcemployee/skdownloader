@@ -89,7 +89,7 @@ def main():
         if "-std" in sys.argv:
             opts += [True]
 
-        dl_(opts)
+        dl_(*opts)
     except Exception as e:
         print(e)
 
