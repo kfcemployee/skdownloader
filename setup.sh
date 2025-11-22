@@ -3,7 +3,7 @@
 echo "начинается установка..."
 
 pkg install ffmpeg
-which ffmpeg > ffmpeg_path.txt
+which ffmpeg > config.txt
 
 pip install --upgrade pip
 pip install -r requirements.txt
