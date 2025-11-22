@@ -16,8 +16,8 @@ def dl_(url, output_path="downloads/", is_pl=None, ffmpeg_path=None, std=False):
 
     ffmpath: str = "ffmpeg.exe"
     if not ffmpeg_path:
-        if os.path.exists("ffmpeg_path"):
-            ffmpath = open('ffmpeg_path').read().strip()
+        if os.path.exists("ffmpeg_path.txt"):
+            ffmpath = open('ffmpeg_path.txt').read().strip()
     else:
         ffmpath = ffmpeg_path
         with open('ffmpeg_path', "w") as f:
